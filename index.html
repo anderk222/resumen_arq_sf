@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mapa conceptual - Arquitectura y Diseño de Software</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.4/dist/semantic.min.css">
+  <style>
+    :root {
+      --page-bg: #f7f7f8;
+      --line: #d4d4d5;
+      --detail-bg: #ffffff;
+      --muted: #767676;
+    }
+
+    body {
+      background: var(--page-bg);
+      transition: background-color .18s ease, color .18s ease;
+    }
+
+    .page {
+      max-width: 1480px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 3rem;
+    }
+
+    .page-header {
+      margin-bottom: 1.5rem;
+    }
+
+    .page-header .sub.header {
+      max-width: 820px;
+      line-height: 1.55;
+    }
+
+    .theme-button {
+      white-space: nowrap;
+    }
+
+    .workspace.ui.grid {
+      margin-top: 0;
+    }
+
+    .map-shell {
+      margin: 0 !important;
+    }
+
+    .map-intro {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .concept-root {
+      width: min(480px, 100%);
+      margin: 0 auto !important;
+      text-align: center;
+    }
+
+    .concept-root .header {
+      margin-bottom: .65rem !important;
+    }
+
+    .root-connector {
+      width: 1px;
+      height: 2rem;
+      margin: 0 auto;
+      background: var(--line);
+    }
+
+    .branch-grid.ui.grid {
+      position: relative;
+      margin-top: 0;
+      padding-top: 1.25rem;
+    }
+
+    .branch-grid.ui.grid::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 12.5%;
+      right: 12.5%;
+      height: 1px;
+      background: var(--line);
+    }
+
+    .branch-column {
+      position: relative;
+    }
+
+    .branch-column::before {
+      content: "";
+      position: absolute;
+      top: -1.25rem;
+      left: 50%;
+      width: 1px;
+      height: 1.25rem;
+      background: var(--line);
+    }
+
+    .branch-heading {
+      margin-bottom: .75rem !important;
+      min-height: 2.8rem;
+    }
+
+    .branch-menu.ui.menu {
+      margin: 0;
+    }
+
+    .branch-menu .item {
+      cursor: pointer;
+    }
+
+    .branch-menu .item .header {
+      margin-bottom: .28rem;
+      font-size: .98rem;
+    }
+
+    .branch-menu .item .description {
+      font-size: .86rem;
+      line-height: 1.4;
+      color: var(--muted);
+    }
+
+    .branch-menu .active.item .description {
+      color: inherit;
+      opacity: .75;
+    }
+
+    .detail-wrap {
+      position: sticky;
+      top: 1rem;
+    }
+
+    .detail-panel.ui.segment {
+      margin-top: 0;
+      background: var(--detail-bg);
+    }
+
+    .detail-panel .ui.ribbon.label {
+      margin-bottom: 1.25rem;
+    }
+
+    .detail-title {
+      margin-top: .4rem !important;
+    }
+
+    .detail-description {
+      font-size: 1.05rem;
+      line-height: 1.72;
+    }
+
+    .detail-list .item {
+      padding-top: 1rem !important;
+      padding-bottom: 1rem !important;
+    }
+
+    .detail-list .circular.label {
+      margin-top: .1rem;
+    }
+
+    .course-note {
+      margin-top: 1rem !important;
+    }
+
+    .map-caption {
+      margin-top: 1rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* Modo oscuro: ajustes pequeños sobre los componentes de Fomantic */
+    body.dark-mode {
+      --page-bg: #1b1c1d;
+      --line: #4a4b4d;
+      --detail-bg: #242526;
+      --muted: #b5b5b5;
+      color: #efefef;
+    }
+
+    body.dark-mode .ui.header,
+    body.dark-mode .ui.header .sub.header,
+    body.dark-mode .ui.basic.button,
+    body.dark-mode .ui.menu .item,
+    body.dark-mode .ui.list .item,
+    body.dark-mode .ui.list .header,
+    body.dark-mode .ui.message,
+    body.dark-mode .ui.segment {
+      color: #efefef !important;
+    }
+
+    body.dark-mode .ui.segment,
+    body.dark-mode .ui.vertical.menu,
+    body.dark-mode .ui.message {
+      background: #242526 !important;
+      border-color: #3d3e40 !important;
+      box-shadow: none !important;
+    }
+
+    body.dark-mode .ui.vertical.menu .item::before,
+    body.dark-mode .ui.divided.list > .item {
+      border-color: #3d3e40 !important;
+    }
+
+    body.dark-mode .ui.vertical.menu .item:hover {
+      background: #2d2e30 !important;
+    }
+
+    body.dark-mode .ui.vertical.menu .active.item {
+      background: #303238 !important;
+      color: #fff !important;
+    }
+
+    body.dark-mode .ui.basic.button {
+      background: transparent !important;
+      box-shadow: 0 0 0 1px #555 inset !important;
+    }
+
+    body.dark-mode .detail-description,
+    body.dark-mode .branch-menu .item .description,
+    body.dark-mode .map-caption {
+      color: #b5b5b5 !important;
+    }
+
+    @media (max-width: 1200px) {
+      .detail-wrap {
+        position: static;
+      }
+
+      .branch-grid.ui.grid::before,
+      .branch-column::before,
+      .root-connector {
+        display: none;
+      }
+
+      .branch-grid.ui.grid {
+        padding-top: 0;
+      }
+    }
+
+    @media (max-width: 767px) {
+      .page {
+        padding: 1.25rem .9rem 2rem;
+      }
+
+      .map-intro {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .page-header .ui.grid > .column:last-child {
+        text-align: left !important;
+        padding-top: 0 !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="page-header">
+      <div class="ui stackable middle aligned grid">
+        <div class="twelve wide column">
+          <h1 class="ui huge header">
+            Arquitectura y Diseño de Software
+            <span class="sub header">Mapa conceptual interactivo del resumen del curso. Los conceptos están agrupados por relación y puedes abrir cada tema para revisar la explicación.</span>
+          </h1>
+        </div>
+        <div class="four wide right aligned column">
+          <button class="ui compact basic button theme-button" id="themeBtn" type="button">🌙 Modo oscuro</button>
+        </div>
+      </div>
+    </header>
+
+    <div class="ui stackable grid workspace">
+      <section class="ten wide column">
+        <div class="ui basic segment map-shell">
+          <div class="map-intro">
+            <div>
+              <h2 class="ui medium header">Estructura del curso</h2>
+              <div class="ui small grey text">Tema central → bloques → conceptos relacionados.</div>
+            </div>
+            <div class="ui basic blue label">16 conceptos</div>
+          </div>
+
+          <div class="ui blue segment concept-root">
+            <div class="ui small blue top attached label">TEMA CENTRAL</div>
+            <h2 class="ui header">Arquitectura y Diseño de Software</h2>
+            <p>Entender el problema, definir prioridades y elegir una solución que tenga sentido para el contexto.</p>
+          </div>
+
+          <div class="root-connector"></div>
+
+          <div class="ui four column stackable relaxed grid branch-grid">
+            <div class="column branch-column">
+              <h3 class="ui small header branch-heading">🧠 Fundamentos y modelado</h3>
+              <div class="ui fluid vertical menu branch-menu">
+                <a class="item topic" data-id="diseno"><div class="header">Importancia del diseño</div><div class="description">Primero entender, luego decidir.</div></a>
+                <a class="item topic" data-id="uml"><div class="header">UML</div><div class="description">Modelar y documentar el sistema.</div></a>
+                <a class="item topic" data-id="casos"><div class="header">Casos de uso</div><div class="description">Actores, funciones y relaciones.</div></a>
+                <a class="item topic" data-id="arquitectura"><div class="header">Arquitectura de software</div><div class="description">Estructura general de la solución.</div></a>
+              </div>
+            </div>
+
+            <div class="column branch-column">
+              <h3 class="ui small header branch-heading">🏗️ Estructuras arquitectónicas</h3>
+              <div class="ui fluid vertical menu branch-menu">
+                <a class="item topic" data-id="calidad"><div class="header">Atributos de calidad</div><div class="description">Rendimiento, seguridad, disponibilidad...</div></a>
+                <a class="item topic" data-id="estilos"><div class="header">Estilos arquitectónicos</div><div class="description">Monolito, microservicios, eventos...</div></a>
+                <a class="item topic" data-id="microkernel"><div class="header">Arquitectura Microkernel</div><div class="description">Núcleo pequeño + módulos o plugins.</div></a>
+                <a class="item topic" data-id="hexagonal"><div class="header">Arquitectura hexagonal</div><div class="description">Dominio, puertos y adaptadores.</div></a>
+              </div>
+            </div>
+
+            <div class="column branch-column">
+              <h3 class="ui small header branch-heading">⚙️ Construcción y operación</h3>
+              <div class="ui fluid vertical menu branch-menu">
+                <a class="item topic" data-id="persistencia"><div class="header">Persistencia de datos</div><div class="description">Repository, ORM y acceso a datos.</div></a>
+                <a class="item topic" data-id="errores"><div class="header">Errores, logs y tolerancia</div><div class="description">Retry, fallback y circuit breaker.</div></a>
+                <a class="item topic" data-id="seguridad"><div class="header">Seguridad</div><div class="description">Autenticación, autorización y OWASP.</div></a>
+                <a class="item topic" data-id="testing"><div class="header">Testing y DevOps</div><div class="description">Pruebas, CI/CD, Docker y Kubernetes.</div></a>
+              </div>
+            </div>
+
+            <div class="column branch-column">
+              <h3 class="ui small header branch-heading">📐 Decisiones y calidad del código</h3>
+              <div class="ui fluid vertical menu branch-menu">
+                <a class="item topic" data-id="adr"><div class="header">ADR y frameworks</div><div class="description">Documentar y elegir con criterio.</div></a>
+                <a class="item topic" data-id="antipatrones"><div class="header">Antipatrones</div><div class="description">Señales de mal diseño.</div></a>
+                <a class="item topic" data-id="solid"><div class="header">SOLID y principios</div><div class="description">Código claro y mantenible.</div></a>
+                <a class="item topic" data-id="metricas"><div class="header">Métricas y trade-offs</div><div class="description">Medir y balancear decisiones.</div></a>
+              </div>
+            </div>
+          </div>
+
+          <p class="map-caption">Los bloques solo agrupan los temas por la relación principal con la que fueron revisados en el curso; varios conceptos se conectan entre sí.</p>
+        </div>
+      </section>
+
+      <aside class="six wide column">
+        <div class="detail-wrap">
+          <div class="ui segment detail-panel">
+            <div class="ui blue ribbon label" id="tag">Concepto central</div>
+            <h2 class="ui header detail-title" id="title">Arquitectura de software</h2>
+            <p class="detail-description" id="desc"></p>
+
+            <div class="ui relaxed divided list detail-list" id="points"></div>
+            <div class="ui small message course-note" id="note"></div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <script>
+    const data = {
+      diseno: {
+        tag: "Base del curso",
+        title: "Importancia del diseño",
+        desc: "Antes de pensar en tecnologías o arquitecturas hay que entender bien el problema. El diseño permite conocer qué hará el sistema, quién lo usará, sus restricciones y las prioridades que realmente importan.",
+        points: [
+          ["Contexto", "Permite entender usuarios, funciones, límites y prioridades."],
+          ["Decisiones", "Ayuda a elegir una arquitectura adecuada en lugar de seguir una moda."],
+          ["Simplicidad", "Evita crear soluciones demasiado complejas para problemas pequeños."]
+        ],
+        note: "Una buena arquitectura parte de un buen entendimiento del problema."
+      },
+      uml: {
+        tag: "Modelado",
+        title: "UML",
+        desc: "UML es un lenguaje gráfico utilizado para visualizar y documentar sistemas. Permite representar distintas partes de una solución antes o durante el desarrollo y facilita comunicar ideas sin depender únicamente del código.",
+        points: [
+          ["Diagramas", "Clases, casos de uso, secuencia, actividades, componentes, despliegue, etc."],
+          ["Uso", "Ayuda a explicar estructura y comportamiento."],
+          ["Herramientas", "Puede trabajarse con draw.io, Lucidchart y otras similares."]
+        ],
+        note: "UML sirve para pensar y comunicar el sistema de forma visual."
+      },
+      casos: {
+        tag: "Análisis funcional",
+        title: "Casos de uso",
+        desc: "Los diagramas de casos de uso muestran quién interactúa con el software y qué funciones principales ejecuta. También permiten representar relaciones entre casos de uso, como include y extend.",
+        points: [
+          ["Actores", "Pueden ser personas o sistemas externos."],
+          ["Casos de uso", "Representan funciones relevantes del sistema."],
+          ["Relaciones", "Include indica comportamiento obligatorio y extend comportamiento opcional."]
+        ],
+        note: "Ayudan a aterrizar rápidamente qué debe hacer el sistema."
+      },
+      arquitectura: {
+        tag: "Concepto central",
+        title: "Arquitectura de software",
+        desc: "La arquitectura define la estructura general del sistema, sus componentes principales, sus responsabilidades, cómo se comunican y qué decisiones técnicas son importantes. No se limita a dónde corre la aplicación; describe cómo está organizada la solución a alto nivel.",
+        points: [
+          ["Estructura", "Componentes y responsabilidades principales."],
+          ["Comunicación", "Cómo se relacionan las partes del sistema."],
+          ["Contexto", "La arquitectura adecuada depende de las necesidades reales."]
+        ],
+        note: "No existe una arquitectura universalmente correcta para todos los proyectos."
+      },
+      calidad: {
+        tag: "Criterios",
+        title: "Atributos de calidad",
+        desc: "Son características que esperamos del sistema además de que simplemente funcione. Se revisaron rendimiento, escalabilidad, disponibilidad, mantenibilidad, seguridad y usabilidad como guías para tomar decisiones arquitectónicas.",
+        points: [
+          ["Prioridades", "No todos los sistemas necesitan maximizar lo mismo."],
+          ["Ejemplos", "Disponibilidad, seguridad, rendimiento y mantenibilidad."],
+          ["Impacto", "Cada atributo puede cambiar las decisiones de diseño."]
+        ],
+        note: "Primero se define qué calidad importa más; después se diseña alrededor de eso."
+      },
+      estilos: {
+        tag: "Estructuras",
+        title: "Estilos arquitectónicos",
+        desc: "Se revisaron distintas formas de organizar un sistema: monolito, cliente-servidor, capas, SOA, microservicios, arquitectura orientada a eventos, serverless y monolito modular. La idea fue entender sus ventajas y costos, no buscar un ganador absoluto.",
+        points: [
+          ["Monolito", "Puede ser suficiente y más simple para muchos sistemas."],
+          ["Microservicios", "Aíslan dominios, pero añaden red, observabilidad y operación."],
+          ["Elección", "Depende del contexto, equipo y necesidades."]
+        ],
+        note: "El estilo más moderno no necesariamente es el más adecuado."
+      },
+      microkernel: {
+        tag: "Estilo arquitectónico",
+        title: "Arquitectura Microkernel",
+        desc: "En Microkernel existe un núcleo pequeño con las funciones esenciales del sistema y capacidades adicionales que se agregan mediante módulos o plugins. Esto permite extender la aplicación sin modificar demasiado su parte central.",
+        points: [
+          ["Núcleo", "Contiene la funcionalidad esencial."],
+          ["Plugins", "Agregan comportamientos o características adicionales."],
+          ["Ventaja", "Facilita personalización y extensión controlada."]
+        ],
+        note: "Es útil cuando el sistema necesita crecer por módulos o admitir extensiones."
+      },
+      hexagonal: {
+        tag: "Patrón arquitectónico",
+        title: "Arquitectura hexagonal",
+        desc: "La arquitectura hexagonal busca que la lógica del negocio no dependa directamente de frameworks, bases de datos o APIs externas. El dominio queda en el centro, mientras puertos y adaptadores conectan las tecnologías externas.",
+        points: [
+          ["Dominio", "La lógica principal permanece aislada."],
+          ["Puertos", "Definen contratos de entrada y salida."],
+          ["Adaptadores", "Conectan base de datos, APIs, UI, colas, etc."]
+        ],
+        note: "La idea es reducir el impacto de cambiar tecnologías externas."
+      },
+      persistencia: {
+        tag: "Datos",
+        title: "Persistencia de datos",
+        desc: "La persistencia permite que la información sobreviva al cierre de la aplicación. Se revisó modelado de datos, separación entre negocio y acceso a datos, Repository, ORM y enfoques como Active Record y Data Mapper.",
+        points: [
+          ["Repository", "Encapsula consultas y operaciones sobre datos."],
+          ["ORM", "Relaciona objetos con tablas relacionales."],
+          ["Ejemplo Java", "JPA como especificación y Hibernate como implementación."]
+        ],
+        note: "Guardar datos también implica diseñar bien cómo se accede a ellos."
+      },
+      errores: {
+        tag: "Resiliencia",
+        title: "Errores, logs y tolerancia a fallos",
+        desc: "Un sistema debe asumir que algunas cosas van a fallar. Por eso se revisaron manejo de errores, logs para trazabilidad y mecanismos como retry, fallback y circuit breaker para evitar que una dependencia caída arrastre al resto del sistema.",
+        points: [
+          ["Logging", "Permite investigar qué ocurrió en ejecución."],
+          ["Retry / fallback", "Ayudan a recuperarse o responder de forma alternativa."],
+          ["Circuit breaker", "Evita insistir sobre una dependencia que está fallando."]
+        ],
+        note: "Un sistema robusto sabe fallar de forma controlada."
+      },
+      seguridad: {
+        tag: "Protección",
+        title: "Seguridad",
+        desc: "Se revisó la diferencia entre autenticación y autorización, además de JWT, OAuth2, OpenID Connect y OWASP Top 10. La seguridad debe considerarse desde el diseño y no añadirse como un parche al final.",
+        points: [
+          ["Autenticación", "Responde quién es el usuario."],
+          ["Autorización", "Define qué puede hacer después de identificarse."],
+          ["Buenas prácticas", "Validación, permisos, sesiones y credenciales seguras."]
+        ],
+        note: "La seguridad debe estar presente desde el inicio del proyecto."
+      },
+      testing: {
+        tag: "Construcción y operación",
+        title: "Testing y DevOps",
+        desc: "Se revisó la pirámide de testing con pruebas unitarias, integración y end-to-end. También se conectó el desarrollo con la entrega mediante Docker, Kubernetes, CI/CD e infraestructura como código.",
+        points: [
+          ["Testing", "Detecta errores temprano y da confianza para cambiar."],
+          ["CI/CD", "Automatiza compilación, pruebas y despliegues."],
+          ["Contenedores", "Docker y Kubernetes ayudan a empaquetar y operar aplicaciones."]
+        ],
+        note: "No basta con desarrollar: también importa cómo se prueba, entrega y opera el software."
+      },
+      adr: {
+        tag: "Decisiones técnicas",
+        title: "ADR y elección de frameworks",
+        desc: "Los ADR permiten documentar decisiones arquitectónicas importantes, junto con su contexto y consecuencias. También se revisaron frameworks de backend, frontend, móvil y persistencia, enfatizando que la elección debe hacerse con criterios reales del proyecto.",
+        points: [
+          ["ADR", "Deja registro de por qué se tomó una decisión."],
+          ["Frameworks", "Spring Boot, React, Angular, Django, Flutter y otros."],
+          ["Criterios", "Mantenimiento, comunidad, seguridad, experiencia y costo."]
+        ],
+        note: "Elegir una herramienta por moda puede convertirse en deuda más adelante."
+      },
+      antipatrones: {
+        tag: "Alertas",
+        title: "Antipatrones",
+        desc: "Se revisaron ejemplos como Big Ball of Mud, God Object, Spaghetti Code, Golden Hammer, Lava Flow y Copy & Paste. Son señales de que el diseño está perdiendo claridad y el sistema se está volviendo difícil de mantener.",
+        points: [
+          ["God Object", "Una clase concentra demasiadas responsabilidades."],
+          ["Big Ball of Mud", "El sistema pierde una estructura clara."],
+          ["Golden Hammer", "Se fuerza una misma herramienta para cualquier problema."]
+        ],
+        note: "Reconocer antipatrones temprano evita que el sistema se vuelva inmanejable."
+      },
+      solid: {
+        tag: "Buenas prácticas",
+        title: "SOLID y principios de diseño",
+        desc: "SOLID reúne cinco principios que ayudan a reducir acoplamiento y mantener responsabilidades claras. También se revisaron DRY, KISS, YAGNI, alta cohesión, bajo acoplamiento y programación por interfaces.",
+        points: [
+          ["SOLID", "SRP, OCP, LSP, ISP y DIP."],
+          ["DRY / KISS / YAGNI", "Evitar repetir, mantener simple y no anticipar necesidades inexistentes."],
+          ["Resultado", "Código más fácil de mantener y cambiar."]
+        ],
+        note: "Son guías para detectar problemas de diseño, no reglas rígidas."
+      },
+      metricas: {
+        tag: "Evaluación",
+        title: "Métricas y trade-offs",
+        desc: "Se revisaron métricas como tiempo de respuesta, disponibilidad, MTBF, MTTR, cobertura de pruebas y complejidad ciclomática. También se trabajó el concepto de trade-off: mejorar una característica suele implicar algún costo en otra.",
+        points: [
+          ["Métricas", "Ayudan a observar el sistema con datos."],
+          ["Trade-offs", "Más disponibilidad, seguridad o modularidad puede aumentar costo o complejidad."],
+          ["Equilibrio", "La meta es una solución adecuada, no perfecta."]
+        ],
+        note: "Arquitectura es también saber priorizar y aceptar compromisos."
+      }
+    };
+
+    const tag = document.getElementById('tag');
+    const title = document.getElementById('title');
+    const desc = document.getElementById('desc');
+    const points = document.getElementById('points');
+    const note = document.getElementById('note');
+    const themeBtn = document.getElementById('themeBtn');
+
+    function showTopic(id) {
+      const topic = data[id];
+      if (!topic) return;
+
+      document.querySelectorAll('.topic').forEach(item => {
+        item.classList.toggle('active', item.dataset.id === id);
+      });
+
+      tag.textContent = topic.tag;
+      title.textContent = topic.title;
+      desc.textContent = topic.desc;
+      note.textContent = topic.note;
+      points.innerHTML = '';
+
+      topic.points.forEach((point, index) => {
+        const item = document.createElement('div');
+        item.className = 'item';
+        item.innerHTML = `
+          <div class="right floated content"></div>
+          <div class="ui circular blue label">${index + 1}</div>
+          <div class="content">
+            <div class="header">${point[0]}</div>
+            <div class="description">${point[1]}</div>
+          </div>`;
+        points.appendChild(item);
+      });
+    }
+
+    document.querySelectorAll('.topic').forEach(item => {
+      item.addEventListener('click', event => {
+        event.preventDefault();
+        showTopic(item.dataset.id);
+      });
+    });
+
+    function updateThemeButton() {
+      themeBtn.textContent = document.body.classList.contains('dark-mode')
+        ? '☀️ Modo claro'
+        : '🌙 Modo oscuro';
+    }
+
+    if (localStorage.getItem('architecture-map-theme') === 'dark') {
+      document.body.classList.add('dark-mode');
+    }
+
+    themeBtn.addEventListener('click', () => {
+      document.body.classList.toggle('dark-mode');
+      localStorage.setItem(
+        'architecture-map-theme',
+        document.body.classList.contains('dark-mode') ? 'dark' : 'light'
+      );
+      updateThemeButton();
+    });
+
+    updateThemeButton();
+    showTopic('arquitectura');
+  </script>
+</body>
+</html>
