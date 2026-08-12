@@ -1,1 +1,0 @@
-# resumen_arq_sf

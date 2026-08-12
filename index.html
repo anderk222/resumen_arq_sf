@@ -255,35 +255,30 @@
         padding-top: 0 !important;
       }
     }
+
+    .theme-row {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: .75rem;
+    }
   </style>
 </head>
 <body>
   <main class="page">
+    <div class="theme-row">
+      <button class="ui tiny basic button theme-button" id="themeBtn" type="button">🌙 Modo oscuro</button>
+    </div>
+
     <header class="page-header">
-      <div class="ui stackable middle aligned grid">
-        <div class="twelve wide column">
-          <h1 class="ui huge header">
-            Arquitectura y Diseño de Software
-            <span class="sub header">Mapa conceptual interactivo del resumen del curso. Los conceptos están agrupados por relación y puedes abrir cada tema para revisar la explicación.</span>
-          </h1>
-        </div>
-        <div class="four wide right aligned column">
-          <button class="ui compact basic button theme-button" id="themeBtn" type="button">🌙 Modo oscuro</button>
-        </div>
-      </div>
+      <h2 class="ui header">
+        Estructura del curso
+        <div class="sub header">Tema central → bloques → conceptos relacionados.</div>
+      </h2>
     </header>
 
     <div class="ui stackable grid workspace">
       <section class="ten wide column">
         <div class="ui basic segment map-shell">
-          <div class="map-intro">
-            <div>
-              <h2 class="ui medium header">Estructura del curso</h2>
-              <div class="ui small grey text">Tema central → bloques → conceptos relacionados.</div>
-            </div>
-            <div class="ui basic blue label">16 conceptos</div>
-          </div>
-
           <div class="ui blue segment concept-root">
             <div class="ui small blue top attached label">TEMA CENTRAL</div>
             <h2 class="ui header">Arquitectura y Diseño de Software</h2>
